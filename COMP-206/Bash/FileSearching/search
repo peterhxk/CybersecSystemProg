@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+        echo "Error, wrong input please use $0 WHERE NAME"
+        exit 1
+fi
+
+WHERE="$1"
+NAME="$2"
+search_directory() { 
+        local dir="$1"
+        local filename="$2"
+          
+        for item in "$dir"/*; do
+                if [ -d "$item" ]; then
+                        search_directory "$item" "$filename"
+                elif [ -f "$item" ]; then
+                        basename=$(basename "$item")
+                        if [ "$basename" = "$filename" ];then
+                                echo "$item"
+                        fi
+                fi
+        done
+}   
+
+search_directory "$WHERE" "$NAME"

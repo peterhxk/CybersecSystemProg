@@ -1,0 +1,62 @@
+#!/bin/bash
+
+gcc -Wall  -o minicalc minicalc.c -lm
+
+if [ $? -ne 0 ]; then
+    echo "Compilation failed. Please fix the errors."
+    exit 1
+fi
+
+it(){
+        name="$1"
+        expected_exit="$2"
+        expected_stdout="$3"
+        expected_stderr="$4"
+        input="${@:5}"
+
+        stdout=$(./minicalc $input 2>stderr_file)
+        exitcode=$?
+        stderr=$(<stderr_file)
+        rm stderr_file
+
+        if [ $expected_exit == $exitcode ] && [ "$expected_stdout" == "$stdout" ] && [ "$expected_stderr" == "$stderr" ]; then
+                echo "$1: OK"
+        else
+                echo "$1: FAILED"
+                if [ "$expected_exit" != "$exitcode" ];then
+                        echo "  expected exitcode: $expected_exit"
+                        echo "  actual exitcode: $exitcode"
+                fi
+                if [ "$expected_stdout" != "$stdout" ];then
+                        echo "  expected stdout: $expected_stdout"
+                        echo "  actual stdout: $stdout"
+                fi
+                if [ "$expected_stderr" != "$stderr" ];then
+                        echo "  expected stderr: $expected_stderr"
+                        echo "  actual stderr: $stderr"
+                fi
+        fi
+          
+}        
+          
+it "sqrt(16)" 0 "The result of square root is: 4.00" "" sqrt 16
+it "gcd(5, 40)" 0 "The greatest common divisor is: 5" "" gcd 5 40
+it "anagram 'list' 'slit'" 0 "true" "" anagram list silt
+it "anagram 'abc' 'bbc'" 0 "false" "" anagram abc bbc
+it "sqrt(17)" 0 "The result of square root is: 4.12" "" sqrt 17
+it "no arguments" 1 "" "no arguments"
+it "unknown operation" 1 "" "command non-existant" OP
+it "sqrt with not 1 operands" 2 "" "invalid input" sqrt 1 2
+it "gcd with less than 1 operand" 2 "" "invalid input" gcd
+it "anagram with 3 operands" 2 "" "invalid input" anagram wa wa wa
+it "anagram with 1 operands" 2 "" "invalid input" anagram wa
+it "sqrt not represent entirety a floating point number" 3 "" "arguments are not entirely number" sqrt 4123321abc
+it "sqrt a negative number" 3 "" "Error, arguments are not strictly greater than zero" sqrt -1
+it "gcd represent integers in their entirety" 3 "" "arguments are not entirely integers" gcd 2 5 1.2
+it "gcd input negative" 3 "" "Error, arguments are not strictly greater than zero" gcd -1 2 5
+it "gcd input zero" 0 "" "Error, arguments are not strictly greater than zero" gcd 0 2 5
+it "anagram consists highercase english letters" 3 "" "Error, the argument is not lowercase" anagram Koa aok
+it "anagram consists not english letters" 3 "" "Error, the argument is not lowercase" anagram 3@d doa
+it "sqrt with no arguments" 2 "" "Invalid input" sqrt
+it "gcd with no arguments" 2 "" "Invalid input" gcd
+it "anagram with no arguments" 2 "" "Invalid input" anagram

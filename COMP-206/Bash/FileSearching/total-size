@@ -1,0 +1,16 @@
+#!/bin/bash
+
+WHERE=$1
+NAME=$2
+
+total=0
+list=$(./search $WHERE $NAME)
+for i in $list;do
+        basename=$(basename "$i")
+        location=$(echo "$i" | sed "s/$basename//g")
+        cd $location
+        size=$(wc -c $basename | cut -d ' ' -f1)
+        echo "this is size $size"
+        ((total = total + size))
+done
+echo $total

@@ -1,0 +1,19 @@
+The read_stdin_line function is unsafe because while using stdin, one is able to write code that exceeds the buffer's size, which could cause a buffer overflow.
+mov DWORD PTR [rbp-0x4],0x0 and mov DWORD PTR [rbp-0x8],0x0 are the instructions corresponding to initializing the variables 'admin' and 'login_successful' with zeros
+buf is not initialized because when passing it into read_stdin_line, we only need to pass in its address, its values will then be initialized within the function
+The value passed as input to the read_stdin_line function is [rbp-0x30]
+-----------------------------
+        RAM
+-----------------------------
+[rbp-0x04] admin
+[rbp-0x08] login_successful
+[rbp-0x30] buf
+...
+----------------------------
+
+for the first input, I typed in admin in order to "log in as admin" aka make admin variable = 1.
+Then I typed in a password with a length of 49 characters and the last character being 1, so the first 48 characters fills up the buf memory block and the next character overflows into the login_successful block, which sets itself to 1.
+
+A solution to the program vulnerability:
+When taking user input, we can save it to a file and then use fgets to limit the amount of characters we take in to the buffer size, that would defeat the approach that I used.
+

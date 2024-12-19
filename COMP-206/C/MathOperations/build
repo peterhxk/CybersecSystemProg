@@ -1,0 +1,84 @@
+#!/bin/bash
+
+gcc -Wall  -o minicalc minicalc.c -lm
+
+if [ $? -ne 0 ]; then
+    echo "Compilation failed. Please fix the errors."
+    exit 1
+fi
+
+echo "Compilation successful."
+
+echo "Running Test 1: sqrt(16)"
+./minicalc sqrt 16
+echo "Error code (should print 0): $?"  
+
+echo "Running Test 2: gcd(5, 40)"
+./minicalc gcd 5 40
+echo "Error code (should print 0): $?"
+
+echo "Running Test 3: anagram 'list' 'silt'"
+./minicalc anagram list silt
+echo "Error code (should print 0): $?"
+
+echo "Running Test 4: anagram 'abc' 'bbc'"
+./minicalc anagram abc bbc
+echo "Error code (should print 0): $?"
+
+echo "Running Test 5: sqrt(17)"
+./minicalc sqrt 17
+echo "Error code (should print 0): $?"
+
+echo "Running Test 6: no arguments"
+./minicalc
+echo "Error code (should print 1): $?"
+
+echo "Running Test 7: unknown operation"
+./minicalc OP
+echo "Error code (should print 1): $?"
+
+echo "Running Test 8: sqrt with not 1 operands"
+./minicalc sqrt 1 2
+echo "Error code (should print 2): $?"
+
+echo "Running Test 9: gcd with less than 1 operand"
+./minicalc gcd
+echo "Error code (should print 2): $?"  
+
+echo "Running Test 10: anagram with not exactly 2 operands"
+./minicalc anagram wa wa wa
+echo "Error code (should print 2): $?"
+./minicalc anagram wa
+echo "Error code (should print 2): $?" 
+
+echo "Running Test 11: sqrt represent entirety a floating point number"
+./minicalc sqrt 4123321abc
+echo "Error code (should print 3): $?"
+
+echo "Running Test 12: sqrt a negative number"
+./minicalc sqrt -1
+echo "Error code (should print 3): $?"  
+
+echo "Running Test 13: gcd represent integers in their entirety"
+./minicalc gcd 2 5 1.2
+echo "Error code (should print 3): $?"
+
+echo "Running Test 14: gcd input strictly greater than zero"
+./minicalc gcd -1 2 5
+echo "Error code (should print 3): $?"  
+./minicalc gcd 0 2 5
+echo "Error code (should print 3): $?"  
+
+echo "Running Test 15: anagram consists only of lower english letters"
+./minicalc anagram Koa aok
+echo "Error code (should print 3): $?"  
+./minicalc anagram 3@d doa
+echo "Error code (should print 3): $?"
+
+echo "Running Test 16: operations with no arguments"
+./minicalc sqrt
+echo "Error code (should print 2): $?"
+./minicalc gcd
+echo "Error code (should print 2): $?"
+./minicalc anagram
+echo "Error code (should print 2): $?"

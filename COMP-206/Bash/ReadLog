@@ -1,0 +1,52 @@
+#!/bin/bash
+
+if [ ! $# -eq 1 ];then
+        echo "invalid input, please use unique-ips, reqs-per-day, most-popular-post, total-transferred"
+        exit 1
+fi
+
+if [ "$1" = "unique-ips" ]; then
+        result=$(grep -Po '^\d+\.\d+\.\d+\.\d+' jerrington.me.log | sort | uniq)
+        count=0
+        for i in $result; do
+                let count++
+        done
+        echo $count
+elif [ "$1" = "reqs-per-day" ]; then
+        result=$(grep -Po '\[.*\]' jerrington.me.log | cut -d ':' -f1 | sed 's/\[//g' | sort | uniq)
+        total=0
+        days=0
+        for i in $result; do
+                ((days++))
+                date=$i
+                list=$(grep -P "$date.*\s200\s" jerrington.me.log)
+                count=0
+                for j in $list; do
+                        ((count++))
+                done
+                ((total=total+count))
+                echo "For $date there are $count requests"
+        done
+        average=0
+        ((average=total/days))
+        echo "on average, $average requests are made per day"
+elif [ "$1" = "most-popular-post" ]; then
+        result=$(grep -Po '\"GET\s/posts/.*\"\s200\s' jerrington.me.log | cut -d ' ' -f2 | sort | uniq)
+        maxpost='None'
+        maxcount=0
+        for i in $result; do
+                postcount=$(grep -c "$i\s" jerrington.me.log)
+                if [ $postcount -gt $maxcount ]; then
+                        maxcount=$postcount
+                        maxpost=$i
+                fi
+        done
+        echo "The most popular post is GET $maxpost with $maxcount requests"
+elif [ "$1" = "total-transferred" ]; then
+        result=$(grep -P "\".*\"\s[1-5]\d\d\s" jerrington.me.log | cut -d ' ' -f10 )
+        total=0
+        for i in $result;do
+                ((total+=i))
+        done
+        echo "the total volume of data transfered is: $total bytes"
+fi
