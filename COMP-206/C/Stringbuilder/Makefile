@@ -1,7 +1,7 @@
 minicalc : minicalc.c
         gcc -Wall -o minicalc minicalc.c -lm
 
-stringbuilder: stringbuilder.h stringbuilder.c
+stringbuilder: stringbuilder.c
         gcc -Wall -o stringbuilder stringbuilder.c
 
 .PHONY : test
