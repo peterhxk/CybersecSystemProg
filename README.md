@@ -1,5 +1,5 @@
 # Cybersecurity & Systems Programming
-Here includes my coding assignments from the class Introduction to Software Systems, involving Bash Scripts and C, ie. names in () are file names
+Here includes my coding assignments from the class Introduction to Software Systems, involving low-level network server systems, Bash Scripts and C, ie. names in () are file names
 
 # Navigate to Bash folder
 (ReadLog)
